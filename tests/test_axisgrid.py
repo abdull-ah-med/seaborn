@@ -723,6 +723,13 @@ class TestFacetGrid:
 
 class TestPairGrid:
 
+    rs = np.random.RandomState(sum(map(ord, "PairGrid")))
+    df = pd.DataFrame(dict(x=rs.normal(size=60),
+                           y=rs.randint(0, 4, size=(60)),
+                           z=rs.gamma(3, size=60),
+                           a=np.repeat(list("abc"), 20),
+                           b=np.repeat(list("abcdefghijkl"), 5)))
+
     @pytest.mark.parametrize("corner", [True, False])
     def test_set(self, corner):
         g = ag.PairGrid(self.df, vars=["x", "y"], corner=corner)
@@ -732,13 +739,6 @@ class TestPairGrid:
             if ax is not None:
                 npt.assert_array_equal(ax.get_xlim(), (-2, 5))
                 npt.assert_array_equal(ax.get_ylim(), (3, 6))
-
-    rs = np.random.RandomState(sum(map(ord, "PairGrid")))
-    df = pd.DataFrame(dict(x=rs.normal(size=60),
-                           y=rs.randint(0, 4, size=(60)),
-                           z=rs.gamma(3, size=60),
-                           a=np.repeat(list("abc"), 20),
-                           b=np.repeat(list("abcdefghijkl"), 5)))
 
     def test_self_data(self):
 
@@ -1501,9 +1501,6 @@ class TestPairGrid:
 
 class TestJointGrid:
 
-    def test_no_grid_set_method(self):
-        assert not hasattr(ag.JointGrid, "set")
-
     rs = np.random.RandomState(sum(map(ord, "JointGrid")))
     x = rs.randn(100)
     y = rs.randn(100)
@@ -1511,6 +1508,9 @@ class TestJointGrid:
     x_na[10] = np.nan
     x_na[20] = np.nan
     data = pd.DataFrame(dict(x=x, y=y, x_na=x_na))
+
+    def test_no_grid_set_method(self):
+        assert not hasattr(ag.JointGrid, "set")
 
     def test_margin_grid_from_lists(self):
 
